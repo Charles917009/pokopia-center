@@ -1,6 +1,6 @@
-// ====== Google Apps Script ======
+// ====== Google Apps Script v2 ======
 // 貼到 Google 試算表的 Apps Script 編輯器中
-// 擴充功能 → Apps Script → 貼上 → 部署為網路應用程式
+// 擴充功能 → Apps Script → 貼上 → 部署 → 管理部署作業 → 編輯 → 版本選「新版本」→ 部署
 
 const SHEET_NAMES = {
   orders: '訂單資料',
@@ -12,11 +12,34 @@ const SHEET_NAMES = {
   templates: '客服用語'
 };
 
+// === GET: 讀取所有資料 ===
+function doGet(e) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const result = {};
+
+    for (const [key, name] of Object.entries(SHEET_NAMES)) {
+      const ws = ss.getSheetByName(name);
+      if (ws) {
+        const data = ws.getDataRange().getValues();
+        result[key] = data;
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({success: true, data: result}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({success: false, error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// === POST: 新增/編輯/刪除 ===
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    const action = data.action; // 'add', 'update', 'delete'
-    const sheet = data.sheet;  // 'orders', 'inventory', etc.
+    const action = data.action;
+    const sheet = data.sheet;
     const payload = data.payload;
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -46,11 +69,6 @@ function doPost(e) {
   }
 }
 
-function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({status: 'ok', message: 'Pokopia API is running'}))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
 function addRow(ws, sheet, payload) {
   const row = buildRow(sheet, payload);
   ws.appendRow(row);
@@ -59,7 +77,7 @@ function addRow(ws, sheet, payload) {
 
 function updateRow(ws, sheet, payload, rowIndex) {
   const row = buildRow(sheet, payload);
-  const actualRow = rowIndex + 2; // +1 for header, +1 for 1-indexed
+  const actualRow = rowIndex + 2;
   for (let i = 0; i < row.length; i++) {
     ws.getRange(actualRow, i + 1).setValue(row[i]);
   }
