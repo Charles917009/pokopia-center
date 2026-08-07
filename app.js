@@ -14,7 +14,7 @@ function loadData() {
 }
 
 function saveData() {
-    saveDataWithSync();
+    localStorage.setItem('pokopia_data', JSON.stringify(appData));
 }
 
 function resetData() {

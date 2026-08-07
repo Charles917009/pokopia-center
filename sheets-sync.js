@@ -32,8 +32,18 @@ async function syncFromGoogleSheets() {
     }
 
     try {
-        const response = await fetch(APPS_SCRIPT_URL);
-        const result = await response.json();
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'GET',
+            redirect: 'follow'
+        });
+        
+        const text = await response.text();
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch (parseErr) {
+            throw new Error('回應不是 JSON 格式，可能是 Apps Script 部署問題');
+        }
 
         if (!result.success || !result.data) {
             throw new Error(result.error || 'No data returned');
