@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Pokopia Center 代購管理系統</title>
-    <link rel="stylesheet" href="styles.css?v=20260807d">
+    <link rel="stylesheet" href="styles.css?v=20260807f">
 </head>
 <body>
     <div class="app-container">
@@ -17,7 +17,8 @@
                 <h2>Pokopia Center</h2>
                 <p>代購管理系統</p>
                 <div id="sync-status" class="sync-status offline">連線中...</div>
-                <button class="sync-btn" onclick="syncFromGoogleSheets()">🔄 同步試算表</button>
+                <button class="sync-btn" onclick="syncFromGoogleSheets()">🔽 同步試算表</button>
+                <button class="sync-btn" onclick="uploadToGoogleSheets()">🔼 上傳至試算表</button>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item active" data-tab="dashboard">
@@ -61,7 +62,10 @@
             <section id="dashboard" class="tab-content active">
                 <div class="mobile-header">
                     <h1>總覽</h1>
-                    <button class="btn-sync-mobile" onclick="syncFromGoogleSheets()">🔄 同步</button>
+                    <div class="mobile-sync-btns">
+                        <button class="btn-sync-mobile" onclick="syncFromGoogleSheets()">🔽 同步</button>
+                        <button class="btn-sync-mobile" onclick="uploadToGoogleSheets()">🔼 上傳</button>
+                    </div>
                 </div>
                 <div class="dashboard-cards">
                     <div class="card card-warning">
@@ -368,8 +372,8 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
-    <script src="data.js?v=20260807d"></script>
-    <script src="app.js?v=20260807d"></script>
-    <script src="sheets-sync.js?v=20260807d"></script>
+    <script src="data.js?v=20260807f"></script>
+    <script src="app.js?v=20260807f"></script>
+    <script src="sheets-sync.js?v=20260807f"></script>
 </body>
 </html>

@@ -721,3 +721,15 @@ tbody tr:hover {
         display: inline-block;
     }
 }
+
+/* Mobile sync buttons group */
+.mobile-sync-btns {
+    display: none;
+    gap: 6px;
+}
+
+@media (max-width: 768px) {
+    .mobile-sync-btns {
+        display: flex;
+    }
+}

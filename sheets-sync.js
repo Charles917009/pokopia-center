@@ -1,27 +1,25 @@
 // ===== Google Sheets Sync via Apps Script =====
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmpNHiaLUNLdq_44OQkvn_nl0LZgZpvUHw_EkNCURkOeFTXvuaWQ-aLg2k5Ja-Y0l0/exec';
 
-// ===== Write to Google Sheets =====
+// ===== Write to Google Sheets (using GET to avoid CORS) =====
 async function writeToSheet(action, sheet, payload, rowIndex) {
     try {
-        const body = { action, sheet, payload };
-        if (rowIndex !== undefined) body.rowIndex = rowIndex;
-
-        // Google Apps Script redirects, so we need special handling
-        const response = await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            redirect: 'follow',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify(body)
+        const params = new URLSearchParams({
+            action: action,
+            sheet: sheet,
+            payload: JSON.stringify(payload || {}),
         });
-        
+        if (rowIndex !== undefined) params.append('rowIndex', rowIndex);
+
+        const url = APPS_SCRIPT_URL + '?' + params.toString();
+        const response = await fetch(url, { redirect: 'follow' });
         const text = await response.text();
+        
         let result;
         try {
             result = JSON.parse(text);
         } catch(e) {
-            console.log('Write response (non-JSON):', text.substring(0, 100));
-            return { success: true }; // Assume success if redirect happened
+            return { success: true };
         }
         
         if (!result.success) {
@@ -31,6 +29,47 @@ async function writeToSheet(action, sheet, payload, rowIndex) {
     } catch (err) {
         console.error('Write to sheet error:', err);
         return { success: false, error: err.message };
+    }
+}
+
+// ===== Upload ALL local data to Google Sheets =====
+async function uploadToGoogleSheets() {
+    const statusEl = document.getElementById('sync-status');
+    if (statusEl) {
+        statusEl.textContent = '上傳中...';
+        statusEl.className = 'sync-status syncing';
+    }
+
+    try {
+        const params = new URLSearchParams({
+            action: 'uploadAll',
+            payload: JSON.stringify(appData)
+        });
+
+        const url = APPS_SCRIPT_URL + '?' + params.toString();
+        const response = await fetch(url, { redirect: 'follow' });
+        const text = await response.text();
+        
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch(e) {
+            // If response is not JSON but fetch succeeded, assume ok
+            result = { success: true };
+        }
+
+        if (statusEl) {
+            statusEl.textContent = '已上傳';
+            statusEl.className = 'sync-status online';
+        }
+        showToast('已上傳至 Google 試算表');
+    } catch (err) {
+        console.error('Upload error:', err);
+        if (statusEl) {
+            statusEl.textContent = '上傳失敗';
+            statusEl.className = 'sync-status offline';
+        }
+        showToast('上傳失敗: ' + err.message);
     }
 }
 
