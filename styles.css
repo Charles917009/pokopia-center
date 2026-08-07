@@ -291,9 +291,9 @@ tbody tr:hover {
     display: inline-block;
 }
 
-.badge-success { background: #dce8dc; color: #4d6e4d; }
-.badge-warning { background: #f0e6d6; color: #8a7048; }
-.badge-danger { background: #f0dcd6; color: #8a5048; }
+.badge-success { background: #dce8dc; color: #3d7a3d; }
+.badge-warning { background: #f5e0d0; color: #a04030; }
+.badge-danger { background: #f0d0cc; color: #a03030; }
 .badge-info { background: #d6e6e8; color: #4a6e70; }
 .badge-secondary { background: #e8e4e0; color: #6a6460; }
 

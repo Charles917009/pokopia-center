@@ -161,7 +161,7 @@ function getPayBadge(status) {
 function getShipBadge(status) {
     if (status === '已完成') return 'badge-success';
     if (status === '已出貨') return 'badge-info';
-    if (status === '未出貨') return 'badge-warning';
+    if (status === '未出貨') return 'badge-danger';
     if (status === '缺貨') return 'badge-danger';
     return '';
 }
