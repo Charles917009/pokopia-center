@@ -731,21 +731,37 @@ function deleteFinance(idx) {
 
 // ===== Monthly Reports (Auto-Calculate) =====
 function getMonthlyStats() {
-    // Build monthly data from reconciliation (income/profit) and finance (expense)
+    // Build monthly data grouped by 團號 month (not registration date)
+    // 團號格式: PC260627 → 2026年06月, PC260703 → 2026年07月
     const monthMap = {};
 
-    // Aggregate from reconciliation (profit per month based on date)
+    // Parse group ID to get year/month
+    function getMonthFromGroupId(groupId) {
+        if (!groupId || groupId.length < 8) return null;
+        // PC260627 → year=2026, month=06
+        const code = groupId.replace(/^PC/, '');
+        const yy = parseInt(code.substring(0, 2));
+        const mm = parseInt(code.substring(2, 4));
+        if (isNaN(yy) || isNaN(mm)) return null;
+        const year = 2000 + yy;
+        return { year, month: mm };
+    }
+
+    // Aggregate reconciliation by matching order's group ID
     appData.reconciliation.forEach(r => {
-        if (!r.date) return;
-        const d = new Date(r.date);
-        const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
-        if (!monthMap[key]) monthMap[key] = { year: d.getFullYear(), month: d.getMonth() + 1, income: 0, expense: 0, profit: 0, orders: 0 };
+        // Find the order's groupId by orderId
+        const order = appData.orders.find(o => o.orderId === r.orderId);
+        const monthInfo = order ? getMonthFromGroupId(order.groupId) : null;
+        if (!monthInfo) return;
+
+        const key = `${monthInfo.year}-${monthInfo.month}`;
+        if (!monthMap[key]) monthMap[key] = { year: monthInfo.year, month: monthInfo.month, income: 0, expense: 0, profit: 0, orders: 0 };
         monthMap[key].income += (r.totalPaid || 0);
         monthMap[key].profit += (r.profit || 0);
         monthMap[key].orders += 1;
     });
 
-    // Aggregate from finance (expenses per month based on date)
+    // Aggregate finance expenses by date (these are purchase costs, keep by date)
     appData.finance.forEach(f => {
         if (!f.date) return;
         const d = new Date(f.date);
