@@ -41,20 +41,26 @@ async function uploadToGoogleSheets() {
     }
 
     try {
-        const params = new URLSearchParams({
+        // Use a form submission approach to avoid CORS issues with POST
+        const payload = {
             action: 'uploadAll',
             payload: JSON.stringify(appData)
-        });
+        };
 
-        const url = APPS_SCRIPT_URL + '?' + params.toString();
-        const response = await fetch(url, { redirect: 'follow' });
-        const text = await response.text();
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            redirect: 'follow',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        });
         
+        const text = await response.text();
         let result;
         try {
             result = JSON.parse(text);
         } catch(e) {
-            // If response is not JSON but fetch succeeded, assume ok
             result = { success: true };
         }
 

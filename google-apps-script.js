@@ -106,7 +106,19 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  return doGet({parameter: JSON.parse(e.postData.contents)});
+  try {
+    const body = JSON.parse(e.postData.contents);
+    // Convert POST body to parameter format for doGet
+    const fakeEvent = { parameter: {} };
+    fakeEvent.parameter.action = body.action;
+    if (body.sheet) fakeEvent.parameter.sheet = body.sheet;
+    if (body.payload) fakeEvent.parameter.payload = typeof body.payload === 'string' ? body.payload : JSON.stringify(body.payload);
+    if (body.rowIndex !== undefined) fakeEvent.parameter.rowIndex = String(body.rowIndex);
+    return doGet(fakeEvent);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({success: false, error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 function buildRow(sheet, p) {
