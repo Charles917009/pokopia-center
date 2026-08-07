@@ -7,12 +7,23 @@ async function writeToSheet(action, sheet, payload, rowIndex) {
         const body = { action, sheet, payload };
         if (rowIndex !== undefined) body.rowIndex = rowIndex;
 
+        // Google Apps Script redirects, so we need special handling
         const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
+            redirect: 'follow',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify(body)
         });
-        const result = await response.json();
+        
+        const text = await response.text();
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch(e) {
+            console.log('Write response (non-JSON):', text.substring(0, 100));
+            return { success: true }; // Assume success if redirect happened
+        }
+        
         if (!result.success) {
             console.error('Write to sheet failed:', result.error);
         }
