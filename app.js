@@ -275,8 +275,10 @@ function saveOrder() {
     };
     if (editIndex >= 0) {
         appData.orders[editIndex] = order;
+        writeToSheet('update', 'orders', order, editIndex);
     } else {
         appData.orders.push(order);
+        writeToSheet('add', 'orders', order);
     }
     saveData();
     renderOrders();
@@ -289,6 +291,7 @@ function editOrder(idx) { showOrderModal(idx); }
 
 function deleteOrder(idx) {
     if (confirm('確定刪除此訂單？')) {
+        writeToSheet('delete', 'orders', null, idx);
         appData.orders.splice(idx, 1);
         saveData();
         renderOrders();
@@ -375,8 +378,10 @@ function saveInventory() {
     };
     if (editIndex >= 0) {
         appData.inventory[editIndex] = item;
+        writeToSheet('update', 'inventory', item, editIndex);
     } else {
         appData.inventory.push(item);
+        writeToSheet('add', 'inventory', item);
     }
     saveData();
     renderInventory();
@@ -389,6 +394,7 @@ function editInventory(idx) { showInventoryModal(idx); }
 
 function deleteInventory(idx) {
     if (confirm('確定刪除此商品？')) {
+        writeToSheet('delete', 'inventory', null, idx);
         appData.inventory.splice(idx, 1);
         saveData();
         renderInventory();
@@ -497,8 +503,10 @@ function saveReconciliation() {
     };
     if (editIndex >= 0) {
         appData.reconciliation[editIndex] = r;
+        writeToSheet('update', 'reconciliation', r, editIndex);
     } else {
         appData.reconciliation.push(r);
+        writeToSheet('add', 'reconciliation', r);
     }
     saveData();
     renderReconciliation();
@@ -512,6 +520,7 @@ function editReconciliation(idx) { showReconciliationModal(idx); }
 
 function deleteReconciliation(idx) {
     if (confirm('確定刪除此對帳紀錄？')) {
+        writeToSheet('delete', 'reconciliation', null, idx);
         appData.reconciliation.splice(idx, 1);
         saveData();
         renderReconciliation();
@@ -605,8 +614,10 @@ function saveBuyer() {
     };
     if (editIndex >= 0) {
         appData.buyers[editIndex] = b;
+        writeToSheet('update', 'buyers', b, editIndex);
     } else {
         appData.buyers.push(b);
+        writeToSheet('add', 'buyers', b);
     }
     saveData();
     renderBuyers();
@@ -618,6 +629,7 @@ function editBuyer(idx) { showBuyerModal(idx); }
 
 function deleteBuyer(idx) {
     if (confirm('確定刪除此買家？')) {
+        writeToSheet('delete', 'buyers', null, idx);
         appData.buyers.splice(idx, 1);
         saveData();
         renderBuyers();
@@ -708,8 +720,10 @@ function saveFinance() {
     if (editIndex >= 0) {
         f.verified = appData.finance[editIndex].verified;
         appData.finance[editIndex] = f;
+        writeToSheet('update', 'finance', f, editIndex);
     } else {
         appData.finance.push(f);
+        writeToSheet('add', 'finance', f);
     }
     saveData();
     renderFinance();
@@ -722,6 +736,7 @@ function editFinance(idx) { showFinanceModal(idx); }
 
 function deleteFinance(idx) {
     if (confirm('確定刪除此收支紀錄？')) {
+        writeToSheet('delete', 'finance', null, idx);
         appData.finance.splice(idx, 1);
         saveData();
         renderFinance();
@@ -931,8 +946,10 @@ function saveTemplate() {
     };
     if (editIndex >= 0) {
         appData.templates[editIndex] = t;
+        writeToSheet('update', 'templates', t, editIndex);
     } else {
         appData.templates.push(t);
+        writeToSheet('add', 'templates', t);
     }
     saveData();
     renderTemplates();
@@ -944,6 +961,7 @@ function editTemplate(idx) { showTemplateModal(idx); }
 
 function deleteTemplate(idx) {
     if (confirm('確定刪除此客服用語？')) {
+        writeToSheet('delete', 'templates', null, idx);
         appData.templates.splice(idx, 1);
         saveData();
         renderTemplates();

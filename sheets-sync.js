@@ -11,6 +11,29 @@ const SHEET_GIDS = {
 };
 
 const SHEET_BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=`;
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmpNHiaLUNLdq_44OQkvn_nl0LZgZpvUHw_EkNCURkOeFTXvuaWQ-aLg2k5Ja-Y0l0/exec';
+
+// ===== Write to Google Sheets =====
+async function writeToSheet(action, sheet, payload, rowIndex) {
+    try {
+        const body = { action, sheet, payload };
+        if (rowIndex !== undefined) body.rowIndex = rowIndex;
+
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(body)
+        });
+        const result = await response.json();
+        if (!result.success) {
+            console.error('Write to sheet failed:', result.error);
+        }
+        return result;
+    } catch (err) {
+        console.error('Write to sheet error:', err);
+        return { success: false, error: err.message };
+    }
+}
 
 // Parse CSV string into array of arrays
 function parseCSV(csv) {
