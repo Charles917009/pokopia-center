@@ -13,6 +13,7 @@
             <div class="logo">
                 <h2>Pokopia Center</h2>
                 <p>代購管理系統</p>
+                <div id="sync-status" class="sync-status offline">連線中...</div>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item active" data-tab="dashboard">
@@ -360,7 +361,10 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script src="data.js"></script>
+    <script src="firebase-sync.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

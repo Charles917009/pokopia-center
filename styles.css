@@ -588,3 +588,22 @@ tbody tr:hover {
     height: 16px;
     cursor: pointer;
 }
+
+/* Sync Status */
+.sync-status {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.sync-status.online {
+    background: rgba(42, 157, 143, 0.2);
+    color: #2a9d8f;
+}
+
+.sync-status.offline {
+    background: rgba(231, 111, 81, 0.2);
+    color: #e76f51;
+}
