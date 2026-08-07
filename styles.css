@@ -696,3 +696,28 @@ tbody tr:hover {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
+
+/* Mobile Header with sync */
+.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.btn-sync-mobile {
+    display: none;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .btn-sync-mobile {
+        display: inline-block;
+    }
+}

@@ -59,7 +59,10 @@
         <main class="main-content">
             <!-- Dashboard -->
             <section id="dashboard" class="tab-content active">
-                <h1>總覽</h1>
+                <div class="mobile-header">
+                    <h1>總覽</h1>
+                    <button class="btn-sync-mobile" onclick="syncFromGoogleSheets()">🔄 同步</button>
+                </div>
                 <div class="dashboard-cards">
                     <div class="card card-warning">
                         <h3>未收款</h3>
