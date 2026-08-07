@@ -380,6 +380,10 @@ tbody tr:hover {
     max-height: 85vh;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .modal-header {
@@ -732,4 +736,9 @@ tbody tr:hover {
     .mobile-sync-btns {
         display: flex;
     }
+}
+
+/* Fix date input alignment */
+.form-group input[type="date"] {
+    width: 100%;
 }
