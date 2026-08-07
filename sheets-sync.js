@@ -73,17 +73,32 @@ function parseCSV(csv) {
 
 // Remove commas from numbers like "69,935" -> 69935
 function parseNum(str) {
-    if (!str || str === '#N/A') return 0;
+    if (!str || str === '#N/A' || str === '#N/A"') return 0;
+    // Remove surrounding quotes if any
+    str = str.replace(/^"|"$/g, '');
     return parseFloat(str.replace(/,/g, '')) || 0;
 }
 
-// Fetch a single sheet as CSV
+// Fetch a single sheet as CSV (using Google Sheets publish workaround for CORS)
 async function fetchSheet(gid) {
-    const url = SHEET_BASE_URL + gid;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to fetch sheet gid=${gid}`);
-    const text = await response.text();
-    return parseCSV(text);
+    // Use the gviz endpoint which supports CORS
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            // Fallback to export URL
+            const fallbackUrl = SHEET_BASE_URL + gid;
+            const fallbackResponse = await fetch(fallbackUrl);
+            if (!fallbackResponse.ok) throw new Error(`Failed to fetch sheet gid=${gid}`);
+            const text = await fallbackResponse.text();
+            return parseCSV(text);
+        }
+        const text = await response.text();
+        return parseCSV(text);
+    } catch (err) {
+        console.error(`Error fetching sheet gid=${gid}:`, err);
+        throw err;
+    }
 }
 
 // Transform orders sheet rows into app data format
@@ -242,7 +257,15 @@ async function syncFromGoogleSheets() {
 // Auto sync on page load and every 5 minutes
 document.addEventListener('DOMContentLoaded', () => {
     // Sync after a short delay to let app initialize
-    setTimeout(syncFromGoogleSheets, 1000);
+    setTimeout(() => {
+        syncFromGoogleSheets().catch(err => {
+            console.error('Initial sync failed:', err);
+        });
+    }, 1500);
     // Auto refresh every 5 minutes
-    setInterval(syncFromGoogleSheets, 5 * 60 * 1000);
+    setInterval(() => {
+        syncFromGoogleSheets().catch(err => {
+            console.error('Auto sync failed:', err);
+        });
+    }, 5 * 60 * 1000);
 });
