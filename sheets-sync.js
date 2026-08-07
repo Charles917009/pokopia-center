@@ -245,12 +245,20 @@ function transformTemplates(rows) {
 // Format date values from Google Sheets
 function formatDate(val) {
     if (!val) return '';
-    if (typeof val === 'string') return val;
-    // Google Sheets returns dates as strings like "2026-06-27T..." 
+    if (typeof val === 'string') {
+        // Convert ISO format to YYYY/M/D
+        if (val.includes('T')) {
+            const d = new Date(val);
+            if (!isNaN(d.getTime())) {
+                return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+            }
+        }
+        return val;
+    }
     try {
         const d = new Date(val);
         if (isNaN(d.getTime())) return String(val);
-        return d.toISOString().slice(0, 10);
+        return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
     } catch {
         return String(val);
     }
