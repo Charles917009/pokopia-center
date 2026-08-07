@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokopia Center 代購管理系統</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>Pokopia Center</h2>
+                <p>代購管理系統</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-tab="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-tab="orders">
+                    <span class="nav-icon">📋</span>
+                    <span>訂單資料</span>
+                </li>
+                <li class="nav-item" data-tab="inventory">
+                    <span class="nav-icon">📦</span>
+                    <span>商品庫存</span>
+                </li>
+                <li class="nav-item" data-tab="reconciliation">
+                    <span class="nav-icon">💰</span>
+                    <span>對帳表</span>
+                </li>
+                <li class="nav-item" data-tab="buyers">
+                    <span class="nav-icon">👥</span>
+                    <span>買家資料</span>
+                </li>
+                <li class="nav-item" data-tab="finance">
+                    <span class="nav-icon">📈</span>
+                    <span>整體收支表</span>
+                </li>
+                <li class="nav-item" data-tab="monthly">
+                    <span class="nav-icon">📅</span>
+                    <span>每月報表</span>
+                </li>
+                <li class="nav-item" data-tab="templates">
+                    <span class="nav-icon">💬</span>
+                    <span>客服用語</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard -->
+            <section id="dashboard" class="tab-content active">
+                <h1>Dashboard</h1>
+                <div class="dashboard-cards">
+                    <div class="card card-warning">
+                        <h3>未收款</h3>
+                        <p class="card-value" id="dash-unpaid">$0</p>
+                    </div>
+                    <div class="card card-success">
+                        <h3>已收款</h3>
+                        <p class="card-value" id="dash-paid">$0</p>
+                    </div>
+                    <div class="card card-info">
+                        <h3>總成本</h3>
+                        <p class="card-value" id="dash-cost">$0</p>
+                    </div>
+                    <div class="card card-profit">
+                        <h3>總淨利</h3>
+                        <p class="card-value" id="dash-profit">$0</p>
+                    </div>
+                    <div class="card card-primary">
+                        <h3>總營收</h3>
+                        <p class="card-value" id="dash-revenue">$0</p>
+                    </div>
+                    <div class="card card-pending">
+                        <h3>待出貨</h3>
+                        <p class="card-value" id="dash-pending">0</p>
+                    </div>
+                </div>
+                <div class="dashboard-row">
+                    <div class="dashboard-section">
+                        <h3>本月營收</h3>
+                        <p class="big-number" id="dash-month-revenue">$0</p>
+                    </div>
+                    <div class="dashboard-section">
+                        <h3>本月淨利</h3>
+                        <p class="big-number" id="dash-month-profit">$0</p>
+                    </div>
+                    <div class="dashboard-section">
+                        <h3>已完成訂單</h3>
+                        <p class="big-number" id="dash-completed">0</p>
+                    </div>
+                </div>
+                <div class="dashboard-row">
+                    <div class="dashboard-section full-width">
+                        <h3>熱門商品 TOP 5</h3>
+                        <div id="dash-top5" class="top5-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Orders -->
+            <section id="orders" class="tab-content">
+                <div class="section-header">
+                    <h1>訂單資料</h1>
+                    <button class="btn btn-primary" onclick="showOrderModal()">+ 新增訂單</button>
+                </div>
+                <div class="filters">
+                    <input type="text" id="order-search" placeholder="搜尋訂單 (單號/買家/商品)..." oninput="filterOrders()">
+                    <select id="order-status-filter" onchange="filterOrders()">
+                        <option value="">全部收款狀態</option>
+                        <option value="已收尾款">已收尾款</option>
+                        <option value="已收訂金">已收訂金</option>
+                        <option value="尚未收款">尚未收款</option>
+                        <option value="已退訂金">已退訂金</option>
+                    </select>
+                    <select id="order-ship-filter" onchange="filterOrders()">
+                        <option value="">全部出貨狀態</option>
+                        <option value="已完成">已完成</option>
+                        <option value="已出貨">已出貨</option>
+                        <option value="未出貨">未出貨</option>
+                        <option value="缺貨">缺貨</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>團號</th>
+                                <th>單號</th>
+                                <th>平台</th>
+                                <th>買家</th>
+                                <th>商品</th>
+                                <th>數量</th>
+                                <th>包材</th>
+                                <th>成本</th>
+                                <th>代購費</th>
+                                <th>訂金</th>
+                                <th>尾款</th>
+                                <th>應收</th>
+                                <th>付款方式</th>
+                                <th>收款狀態</th>
+                                <th>出貨狀態</th>
+                                <th>登記日期</th>
+                                <th>備註</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Inventory -->
+            <section id="inventory" class="tab-content">
+                <div class="section-header">
+                    <h1>商品庫存</h1>
+                    <button class="btn btn-primary" onclick="showInventoryModal()">+ 新增商品</button>
+                </div>
+                <div class="filters">
+                    <input type="text" id="inventory-search" placeholder="搜尋商品..." oninput="filterInventory()">
+                </div>
+                <div class="table-container">
+                    <table id="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>商品ID</th>
+                                <th>商品名稱</th>
+                                <th>成本</th>
+                                <th>需求量</th>
+                                <th>已購入</th>
+                                <th>已退貨</th>
+                                <th>待採購</th>
+                                <th>餘量</th>
+                                <th>備註</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reconciliation -->
+            <section id="reconciliation" class="tab-content">
+                <div class="section-header">
+                    <h1>對帳表</h1>
+                    <button class="btn btn-primary" onclick="showReconciliationModal()">+ 新增對帳</button>
+                </div>
+                <div class="filters">
+                    <input type="text" id="recon-search" placeholder="搜尋 (單號/姓名)..." oninput="filterReconciliation()">
+                    <select id="recon-status-filter" onchange="filterReconciliation()">
+                        <option value="">全部狀態</option>
+                        <option value="已收清">已收清</option>
+                        <option value="未收清">未收清</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="reconciliation-table">
+                        <thead>
+                            <tr>
+                                <th>對應單號</th>
+                                <th>姓名</th>
+                                <th>帳戶末五碼</th>
+                                <th>首匯金額</th>
+                                <th>二補金額</th>
+                                <th>客戶應匯款</th>
+                                <th>留賣貨便</th>
+                                <th>客戶總付款</th>
+                                <th>總成本</th>
+                                <th>退款</th>
+                                <th>總利潤</th>
+                                <th>對帳日期</th>
+                                <th>收支</th>
+                                <th>備註</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Buyers -->
+            <section id="buyers" class="tab-content">
+                <div class="section-header">
+                    <h1>買家資料</h1>
+                    <button class="btn btn-primary" onclick="showBuyerModal()">+ 新增買家</button>
+                </div>
+                <div class="filters">
+                    <input type="text" id="buyer-search" placeholder="搜尋買家..." oninput="filterBuyers()">
+                    <select id="buyer-level-filter" onchange="filterBuyers()">
+                        <option value="">全部等級</option>
+                        <option value="常客">常客</option>
+                        <option value="一般">一般</option>
+                    </select>
+                    <select id="buyer-platform-filter" onchange="filterBuyers()">
+                        <option value="">全部平台</option>
+                        <option value="LINE">LINE</option>
+                        <option value="FB">FB</option>
+                        <option value="脆">脆</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="buyers-table">
+                        <thead>
+                            <tr>
+                                <th>名稱</th>
+                                <th>賣貨便姓名</th>
+                                <th>平台</th>
+                                <th>等級</th>
+                                <th>訂單數</th>
+                                <th>累積消費</th>
+                                <th>最後購買</th>
+                                <th>備註</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Finance -->
+            <section id="finance" class="tab-content">
+                <div class="section-header">
+                    <h1>整體收支表</h1>
+                    <button class="btn btn-primary" onclick="showFinanceModal()">+ 新增收支</button>
+                </div>
+                <div class="filters">
+                    <input type="text" id="finance-search" placeholder="搜尋項目..." oninput="filterFinance()">
+                </div>
+                <div class="finance-summary">
+                    <div class="summary-item">
+                        <span>總支出：</span>
+                        <span class="text-danger" id="finance-total-expense">$0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>總收入：</span>
+                        <span class="text-success" id="finance-total-income">$0</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="finance-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>項目</th>
+                                <th>支出</th>
+                                <th>收入</th>
+                                <th>收支</th>
+                                <th>處理人</th>
+                                <th>核對</th>
+                                <th>備註</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Monthly Reports -->
+            <section id="monthly" class="tab-content">
+                <div class="section-header">
+                    <h1>每月報表</h1>
+                    <span style="color:var(--text-light); font-size:0.85rem;">數據自動從對帳表及收支表計算</span>
+                </div>
+                <div class="table-container">
+                    <table id="monthly-table">
+                        <thead>
+                            <tr>
+                                <th>年份</th>
+                                <th>月份</th>
+                                <th>收入 (實收)</th>
+                                <th>支出 (採購)</th>
+                                <th>淨利</th>
+                                <th>完成單數</th>
+                                <th>狀態</th>
+                                <th>核准人</th>
+                                <th>附註</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Customer Service Templates -->
+            <section id="templates" class="tab-content">
+                <div class="section-header">
+                    <h1>客服用語</h1>
+                    <button class="btn btn-primary" onclick="showTemplateModal()">+ 新增用語</button>
+                </div>
+                <div class="templates-container" id="templates-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modal-title">新增</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" id="modal-save-btn" onclick="saveModal()">儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
